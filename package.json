@@ -8,7 +8,7 @@
     "start": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint ./src/**/*.js",
-    "prettier": "prettier --write ./src/",
+    "prettier": "prettier --write ./src/ ./tests/",
     "refactor": "eslint ./src/**/*.js && prettier --write ./src/",
     "set-build": "git add ./dist/ && git commit -m \"Initial dist subtree commit\"",
     "pub-build": "git subtree push --prefix ./dist/ origin gh-pages"
