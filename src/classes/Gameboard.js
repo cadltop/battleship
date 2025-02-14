@@ -4,15 +4,14 @@ export default class {
     this.board = new Array(10).fill(
       new Array(10).fill({ filled: false, ship: null }),
     );
-    this.ships = [
-      new Ship(5),
-      new Ship(4),
-      new Ship(3),
-      new Ship(3),
-      new Ship(2),
-    ];
+    this.fleet = {
+      carrier: new Ship(5),
+      battleship: new Ship(4),
+      destroyer: new Ship(3),
+      submarine: new Ship(3),
+      patrolBoat: new Ship(2),
+    };
   }
-  receiveAttack(x, y) {}
   placeShip(ship, xy, vertical) {
     const coordinates = [];
     switch (vertical) {

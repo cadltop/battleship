@@ -12,30 +12,26 @@ describe("placing ships", () => {
   });
   describe("orientation", () => {
     test("vertical right", () => {
-      expect(gameboard.placeShip(gameboard.ships[0], [0, 9], true)).toBe(true);
+      expect(gameboard.placeShip("carrier", [0, 9], true)).toBe(true);
     });
     test("vertical wrong", () => {
-      expect(gameboard.placeShip(gameboard.ships[0], [0, 3], true)).toBe(false);
+      expect(gameboard.placeShip("carrier", [0, 3], true)).toBe(false);
     });
     test("horizontal right", () => {
-      expect(gameboard.placeShip(gameboard.ships[0], [0, 0], false)).toBe(true);
+      expect(gameboard.placeShip("carrier", [0, 0], false)).toBe(true);
     });
     test("horizontal wrong", () => {
-      expect(gameboard.placeShip(gameboard.ships[0], [6, 0], false)).toBe(
-        false,
-      );
+      expect(gameboard.placeShip("carrier", [6, 0], false)).toBe(false);
     });
   });
   describe("ships minimum distance", () => {
     test("vertical", () => {
-      gameboard.placeShip(gameboard.ships[0], [0, 9], true);
-      expect(gameboard.placeShip(gameboard.ships[0], [1, 9], true)).toBe(false);
+      gameboard.placeShip("carrier", [0, 9], true);
+      expect(gameboard.placeShip("carrier", [1, 9], true)).toBe(false);
     });
     test("horizontal", () => {
-      gameboard.placeShip(gameboard.ships[0], [0, 0], false);
-      expect(gameboard.placeShip(gameboard.ships[0], [0, 1], false)).toBe(
-        false,
-      );
+      gameboard.placeShip("carrier", [0, 0], false);
+      expect(gameboard.placeShip("carrier", [0, 1], false)).toBe(false);
     });
   });
 });
