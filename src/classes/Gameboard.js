@@ -28,7 +28,7 @@ export default class {
     const shipEnd = vertical
       ? [xy[0], xy[1] - (shipSize - 1)]
       : [xy[0] + (shipSize - 1), xy[1]];
-      
+
     if (this.board[shipEnd[0]] && this.board[shipEnd[0]][shipEnd[1]]) {
       (function getCoordinates(position) {
         for (const p of position) {
@@ -40,37 +40,39 @@ export default class {
         if (position[0] === shipEnd[0] && position[1] === shipEnd[1]) {
           return position;
         }
-        
+
         const coor = vertical
-        ? [position[0], position[1] - 1]
-        : [position[0] + 1, position[1]];
-        
+          ? [position[0], position[1] - 1]
+          : [position[0] + 1, position[1]];
+
         if (getCoordinates(coor)) {
           return coor;
         }
       })(xy);
-      
+
       for (const c of coordinates) {
         if (
           (this.board[c[0] + 1] && this.board[c[0] + 1][c[1]].ship !== null) ||
           (this.board[c[0] - 1] && this.board[c[0] - 1][c[1]].ship !== null) ||
-          (this.board[c[0]][c[1] + 1] && this.board[c[0]][c[1] + 1].ship !== null) ||
-          (this.board[c[0]][c[1] - 1] && this.board[c[0]][c[1] - 1].ship !== null)
+          (this.board[c[0]][c[1] + 1] &&
+            this.board[c[0]][c[1] + 1].ship !== null) ||
+          (this.board[c[0]][c[1] - 1] &&
+            this.board[c[0]][c[1] - 1].ship !== null)
         ) {
           return [];
         }
       }
       for (const c of coordinates) {
         this.board[c[0]][c[1]].ship = ship;
-      }  
+      }
     }
     return coordinates;
   }
-  // receiveAttack(x, y) {
-  //   const position = this.board[x][y];
-  //   if (position.ship !== null) {
-  //     this.fleet[position.ship].hit();
-  //   }
-  //   position.shot = true;
-  // }
+  receiveAttack(x, y) {
+    const position = this.board[x][y];
+    if (position.ship !== null) {
+      this.fleet[position.ship].hit();
+    }
+    position.shot = true;
+  }
 }

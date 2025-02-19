@@ -64,18 +64,17 @@ describe("placing ships", () => {
       gameboard.placeShip("carrier", [0, 0], false);
       expect(gameboard.placeShip("battleship", [0, 2], false).length).toBe(4);
     });
-    
   });
 });
-// describe("receiving attacks", () => {
-//   test("hiting ship", () => {
-//     gameboard.placeShip("carrier", [0, 0], false);
-//     gameboard.receiveAttack(4, 0);
-//     expect(gameboard.fleet.carrier.hits).toBe(1);
-//   });
-//   test("missing shot", () => {
-//     gameboard.placeShip("carrier", [0, 0], false);
-//     gameboard.receiveAttack(5, 0);
-//     expect(gameboard.fleet.carrier.hits).toBe(0);
-//   });
-// });
+describe("receiving attacks", () => {
+  test("hiting ship", () => {
+    gameboard.placeShip("carrier", [0, 0], false);
+    gameboard.receiveAttack(4, 0);
+    expect(gameboard.fleet.carrier.hits).toBe(1);
+  });
+  test("missing shot", () => {
+    gameboard.placeShip("carrier", [0, 0], false);
+    gameboard.receiveAttack(5, 0);
+    expect(gameboard.fleet.carrier.hits).toBe(0);
+  });
+});
