@@ -1,0 +1,27 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+}
+
+div.boards {
+  display: flex;
+  gap: 25px;
+  min-width: fit-content;
+  width: 65vw;
+  height: 30vw;
+}
+div.boards > * {
+  display: grid;
+  grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+  gap: 1px;
+  width: 50%;
+  height: 100%;
+  border: 1px black solid;
+  background-color: black;
+}
+div.boards > * > * {
+  background-color: white;
+}
