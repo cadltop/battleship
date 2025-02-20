@@ -1,7 +1,14 @@
-import Gameboard from './Gameboard';
+import Gameboard from "./Gameboard";
 export default class {
-    #board = new Gameboard();
-    get gameboard(){
-        return this.#board;
-    }
+  #gameboard = new Gameboard();
+  #name = "";
+  constructor(name) {
+    this.#name = name;
+  }
+  get gameboard() {
+    return this.#gameboard;
+  }
+  get name() {
+    return this.#name;
+  }
 }
