@@ -75,4 +75,12 @@ export default class {
     }
     position.shot = true;
   }
+  isFleetSunk() {
+    const sunked = [];
+    for (const ship in this.fleet) {
+      if (this.fleet[ship].isSunk()) sunked.push(ship);
+    }
+    if (sunked.length === 5) return true;
+    else return false;
+  }
 }
