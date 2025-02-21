@@ -10,12 +10,11 @@ test("creation", () => {
 
 describe("placing ships", () => {
   describe("positions", () => {
-    let coor;
     beforeEach(() => {
-      coor = gameboard.placeShip("carrier", [0, 0], false);
+      gameboard.placeShip("carrier", [0, 0], false);
     });
     test("coordinates", () => {
-      expect(coor).toEqual([
+      expect(gameboard.fleet.carrier.positions).toEqual([
         [0, 0],
         [1, 0],
         [2, 0],
@@ -35,34 +34,42 @@ describe("placing ships", () => {
   });
   describe("orientation", () => {
     test("vertical right", () => {
-      expect(gameboard.placeShip("carrier", [0, 9], true).length).toBe(5);
+      gameboard.placeShip("carrier", [0, 9], true);
+      expect(gameboard.fleet.carrier.positions.length).toBe(5);
     });
     test("vertical wrong", () => {
-      expect(gameboard.placeShip("carrier", [0, 3], true).length).toBe(0);
+      gameboard.placeShip("carrier", [0, 3], true);
+      expect(gameboard.fleet.carrier.positions.length).toBe(0);
     });
     test("horizontal right", () => {
-      expect(gameboard.placeShip("carrier", [0, 0], false).length).toBe(5);
+      gameboard.placeShip("carrier", [0, 0], false);
+      expect(gameboard.fleet.carrier.positions.length).toBe(5);
     });
     test("horizontal wrong", () => {
-      expect(gameboard.placeShip("carrier", [6, 0], false).length).toBe(0);
+      gameboard.placeShip("carrier", [6, 0], false);
+      expect(gameboard.fleet.carrier.positions.length).toBe(0);
     });
   });
   describe("ships minimum distance", () => {
     test("vertical near", () => {
       gameboard.placeShip("carrier", [0, 9], true);
-      expect(gameboard.placeShip("battleship", [1, 9], true).length).toBe(0);
+      gameboard.placeShip("battleship", [1, 9], true);
+      expect(gameboard.fleet.battleship.positions.length).toBe(0);
     });
     test("horizontal near", () => {
       gameboard.placeShip("carrier", [0, 0], false);
-      expect(gameboard.placeShip("battleship", [0, 1], false).length).toBe(0);
+      gameboard.placeShip("battleship", [0, 1], false);
+      expect(gameboard.fleet.battleship.positions.length).toBe(0);
     });
     test("vertical far", () => {
       gameboard.placeShip("carrier", [0, 9], true);
-      expect(gameboard.placeShip("battleship", [2, 9], true).length).toBe(4);
+      gameboard.placeShip("battleship", [2, 9], true);
+      expect(gameboard.fleet.battleship.positions.length).toBe(4);
     });
     test("horizontal far", () => {
       gameboard.placeShip("carrier", [0, 0], false);
-      expect(gameboard.placeShip("battleship", [0, 2], false).length).toBe(4);
+      gameboard.placeShip("battleship", [0, 2], false);
+      expect(gameboard.fleet.battleship.positions.length).toBe(4);
     });
   });
 });
