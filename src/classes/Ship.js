@@ -6,7 +6,7 @@ export default class {
   constructor(length) {
     this.length = length;
   }
-  
+
   hit() {
     this.hits++;
     if (this.hits === this.length) this.#sunk = true;

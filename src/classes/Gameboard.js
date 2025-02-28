@@ -74,6 +74,7 @@ export default class {
     }
 
     position.shot = true;
+    return position.ship;
   }
   isFleetSunk() {
     const sunked = [];
