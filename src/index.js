@@ -13,6 +13,4 @@ for (const player of players) {
   player.gameboard.placeShip("patrolBoat", [0, 8], false);
 }
 
-const controller = dom(players);
-controller.renderBoards();
-controller.showFleet(players[0]);
+dom(players);
