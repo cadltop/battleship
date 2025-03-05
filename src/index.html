@@ -8,7 +8,25 @@
   </head>
   <body>
     <h1>Battleship</h1>
-    <div class="boards"></div>
-    <button>Play</button>
+
+    <div id="container">
+      <div class="ships">
+        <h2>Ships</h2>
+        <div class="containers"></div>
+      </div>
+      <div class="orientation">
+        <h3>Orientation</h3>
+        <label>Horizontal</label>
+        <input type="radio" name="orientation" value="false" />
+        <br />
+        <label>Vertical</label>
+        <input type="radio" name="orientation" value="true" />
+      </div>
+      <div class="boards"></div>
+    </div>
+    <div class="buttons">
+      <button>Randomize positions</button>
+      <button>Play</button>
+    </div>
   </body>
 </html>
