@@ -15,11 +15,12 @@ for (const player of players) {
 
 setTurn(players[0]);
 
-
 function createBoard(player) {
   const boardDiv = document.createElement("div");
   boardDiv.classList.add("board", player.name);
   boardDiv.dataset.clickable = null;
+  const boardsDiv = document.querySelector("div.boards");
+  boardsDiv.dataset.end = false;
   
   for (let r = 0; r < 10; r++) {
     for (let c = 9; c >= 0; c--) {
@@ -30,7 +31,8 @@ function createBoard(player) {
       positionDiv.addEventListener("click", () => {
         if (
           boardDiv.dataset.clickable === "false" ||
-          player.gameboard.board[r][c].shot
+          player.gameboard.board[r][c].shot ||
+          boardsDiv.dataset.end === "true"
         ) return;
         
         if (!player.gameboard.receiveAttack(r, c)) {
@@ -39,13 +41,17 @@ function createBoard(player) {
         } else {
           positionDiv.style.backgroundColor = "red";
         }
+        
+        if (player.isFleetSunk()) {
+          findWinner(player.name);
+          boardsDiv.dataset.end = true;
+        }
       });
       
       boardDiv.append(positionDiv);
     }
   }
   
-  const boardsDiv = document.querySelector("div.boards");
   boardsDiv.append(boardDiv);
 
   return boardDiv;
@@ -82,11 +88,21 @@ function setTurn(player) {
     }
   }
 }
+function findWinner(loser) {
+  for (const player of players) {
+    if (player.name !== loser) {
+      alert(player.name + " won!!");
+      return true;
+    }
+  }
+  
+  return false;
+}
 
 (function computerListeners() {
   const computerPositions = boards[1].children;
   for (const positionDiv of computerPositions) {
-    positionDiv.addEventListener("click", () => {
+    positionDiv.addEventListener("c`lick", () => {
       attackEnemy(players[0]);
     });
     
