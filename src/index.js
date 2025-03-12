@@ -60,7 +60,6 @@ let selectedShip = "";
 
         if (!players[0].gameboard.fleet[selectedShip].placed) {
           dom.colorShip(selectedShip, "red");
-          setTimeout(() => dom.colorShip(selectedShip, "blue"), 750);
           return;
         }
 
