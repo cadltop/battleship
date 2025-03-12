@@ -17,7 +17,6 @@ export default class {
     submarine: new Ship(3),
     patrolBoat: new Ship(2),
   };
-
   get board() {
     return this.#board;
   }
@@ -26,6 +25,8 @@ export default class {
   }
 
   placeShip(ship, start, vertical) {
+    if (this.#fleet[ship].placed) return;
+
     const coordinates = [];
     const shipSize = this.#fleet[ship].length;
     const end = vertical
@@ -54,7 +55,19 @@ export default class {
           (this.#board[c[0] + 1] && this.#board[c[0] + 1][c[1]].ship) ||
           (this.#board[c[0] - 1] && this.#board[c[0] - 1][c[1]].ship) ||
           (this.#board[c[0]][c[1] + 1] && this.#board[c[0]][c[1] + 1].ship) ||
-          (this.#board[c[0]][c[1] - 1] && this.#board[c[0]][c[1] - 1].ship)
+          (this.#board[c[0]][c[1] - 1] && this.#board[c[0]][c[1] - 1].ship) ||
+          (this.#board[c[0] + 1] &&
+            this.#board[c[0] + 1][c[1] + 1] &&
+            this.#board[c[0] + 1][c[1] + 1].ship) ||
+          (this.#board[c[0] + 1] &&
+            this.#board[c[0] + 1][c[1] - 1] &&
+            this.#board[c[0] + 1][c[1] - 1].ship) ||
+          (this.#board[c[0] - 1] &&
+            this.#board[c[0] - 1][c[1] + 1] &&
+            this.#board[c[0] - 1][c[1] + 1].ship) ||
+          (this.#board[c[0] - 1] &&
+            this.#board[c[0] - 1][c[1] - 1] &&
+            this.#board[c[0] - 1][c[1] - 1].ship)
         ) {
           return;
         }
@@ -62,9 +75,10 @@ export default class {
       for (const c of coordinates) {
         this.#board[c[0]][c[1]].ship = ship;
       }
-    }
 
-    this.#fleet[ship].positions = coordinates;
+      this.#fleet[ship].positions = coordinates;
+      this.#fleet[ship].placed = true;
+    }
   }
   receiveAttack(x, y) {
     const position = this.#board[x][y];

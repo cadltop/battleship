@@ -1,6 +1,7 @@
 export default class {
   hits = 0;
   #sunk = false;
+  placed = false;
   positions = [];
   length = null;
   constructor(length) {

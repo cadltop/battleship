@@ -1,22 +1,154 @@
 import "normalize.css";
 import "./index.css";
 import Player from "./classes/Player";
+import dom from "./dom";
 
 const players = [new Player("real"), new Player("computer")];
-const boards = [createBoard(players[0]), createBoard(players[1])];
+const boards = [
+  dom.createBoard(players[0].name),
+  dom.createBoard(players[1].name),
+];
 
 for (const ship in players[0].gameboard.fleet) {
-  const shipDiv = document.createElement("div");
-  shipDiv.classList.add("ship", ship.toLowerCase());
+  dom.showShip(ship, players[0].gameboard.fleet[ship].length);
+}
 
-  for (let i = 0; i < players[0].gameboard.fleet[ship].length; i++) {
-    const shipBlockDiv = document.createElement("div");
-    shipBlockDiv.className = "block";
-    shipDiv.append(shipBlockDiv);
+let selectedShip = "";
+
+(function setListeners() {
+  (function shipSelection() {
+    for (const shipDiv of dom.containerDiv.children) {
+      shipDiv.addEventListener("click", () => {
+        for (const sd of dom.containerDiv.children) {
+          if (sd.dataset.placed === "true")
+            dom.colorShip(sd.classList[1], "green");
+          else dom.colorShip(sd.classList[1], "blue");
+        }
+
+        if (players[0].gameboard.fleet[shipDiv.classList[1]].placed) {
+          selectedShip = "";
+          dom.disableOrientation();
+          alert("This ship has been placed already.");
+          return;
+        }
+
+        selectedShip = shipDiv.classList[1];
+        dom.colorShip(selectedShip, "yellow");
+        dom.disableOrientation(false);
+        dom.disableRandomPositioning(false);
+      });
+    }
+    dom.RandomPosButton.addEventListener("click", () => {
+      const positions = boards[0].children;
+      (function put() {
+        dom.orientationRadios[Math.round(Math.random())].click();
+        positions[Math.round(Math.random() * 99)].click();
+        if (!players[0].gameboard.fleet[selectedShip].placed) put();
+      })();
+    });
+  })();
+  (function placingShips() {
+    for (const position of boards[0].children) {
+      position.addEventListener("click", () => {
+        if (players[0].isFleetPlaced() || selectedShip === "") return;
+
+        players[0].gameboard.placeShip(
+          selectedShip,
+          [parseInt(position.dataset.row), parseInt(position.dataset.column)],
+          dom.getOrientation(),
+        );
+
+        if (!players[0].gameboard.fleet[selectedShip].placed) {
+          dom.colorShip(selectedShip, "red");
+          setTimeout(() => dom.colorShip(selectedShip, "blue"), 750);
+          return;
+        }
+
+        for (const p of players[0].gameboard.fleet[selectedShip].positions) {
+          dom.colorPosition(players[0].name, p, "green");
+        }
+
+        dom.colorShip(selectedShip, "green");
+        dom.disableOrientation();
+        dom.disableRandomPositioning();
+
+        for (const ship of dom.containerDiv.children) {
+          if (ship.classList[1] === selectedShip) ship.dataset.placed = true;
+        }
+
+        placingShipsComp();
+        if (players[1].isFleetPlaced()) attackingBoards();
+      });
+    }
+    function placingShipsComp() {
+      players[1].gameboard.placeShip(
+        selectedShip,
+        [Math.round(Math.random() * 9), Math.round(Math.random() * 9)],
+        Math.round(Math.random()) === 1 ? true : false,
+      );
+
+      if (!players[1].gameboard.fleet[selectedShip].placed) placingShipsComp();
+    }
+  })();
+  function attackingBoards() {
+    setTurn(players[0]);
+
+    for (let i = 0; i < 2; i++) {
+      for (const position of boards[i].children) {
+        position.addEventListener("click", () => {
+          const pos = dom.getPositionCoordinates(position);
+
+          if (
+            boards[i].dataset.clickable === "false" ||
+            players[i].gameboard.board[pos.row][pos.column].shot ||
+            dom.boardsDiv.dataset.end === "true"
+          )
+            return;
+
+          if (!players[i].gameboard.receiveAttack(pos.row, pos.column)) {
+            dom.colorPosition(players[i].name, [pos.row, pos.column], "grey");
+            setTurn(players[i]);
+          } else
+            dom.colorPosition(players[i].name, [pos.row, pos.column], "red");
+
+          if (players[i].isFleetSunk()) findWinner(players[i].name);
+        });
+      }
+    }
+
+    (function attackingBoardsComp() {
+      const computerPositions = boards[1].children;
+      for (const positionDiv of computerPositions) {
+        positionDiv.addEventListener("click", function attack() {
+          const positions = boards[0].children;
+          const index = Math.round(Math.random() * 99);
+          const position = positions[index];
+          const pos = dom.getPositionCoordinates(position);
+
+          if (!players[0].gameboard.board[pos.row][pos.column].shot) {
+            setTimeout(() => position.click(), 500);
+            if (players[0].gameboard.board[pos.row][pos.column].ship) attack();
+          } else attack();
+        });
+      }
+    })();
+  }
+})();
+
+function setTurn(player) {
+  for (let i = 0; i < 2; i++) {
+    boards[i].dataset.clickable =
+      dom.boardsDiv.children[i].classList[1] !== player.name ? true : false;
+  }
+}
+
+function findWinner(loser) {
+  for (const player of players) {
+    if (player.name !== loser)
+      setTimeout(() => alert(player.name + " won!!"), 125);
   }
 
-  const shipsDiv = document.querySelector("div.ships > div.containers");
-  shipsDiv.append(shipDiv);
+  dom.boardsDiv.dataset.end = true;
 }
 
 setTimeout(
@@ -25,130 +157,5 @@ setTimeout(
       "Select a ship by clicking it. Choose it's orientation and place " +
         "the ship by clicking a position in your board.",
     ),
-  5,
+  62,
 );
-// for (const player of players) {
-//   player.gameboard.placeShip("carrier", [0, 0], false);
-//   player.gameboard.placeShip("battleship", [0, 2], false);
-//   player.gameboard.placeShip("destroyer", [0, 4], false);
-//   player.gameboard.placeShip("submarine", [0, 6], false);
-//   player.gameboard.placeShip("patrolBoat", [0, 8], false);
-// }
-
-setTurn(players[0]);
-
-function createBoard(player) {
-  const playerDiv = document.createElement("div");
-  playerDiv.classList.add("player", player.name);
-  const h2 = document.createElement("h2");
-  h2.innerHTML = player.name;
-  const boardDiv = document.createElement("div");
-  boardDiv.className = "board";
-  boardDiv.dataset.clickable = null;
-  const boardsDiv = document.querySelector("div.boards");
-  boardsDiv.dataset.end = false;
-
-  for (let r = 0; r < 10; r++) {
-    for (let c = 9; c >= 0; c--) {
-      const positionDiv = document.createElement("div");
-      positionDiv.classList.add("position");
-      positionDiv.dataset.row = r;
-      positionDiv.dataset.column = c;
-      positionDiv.addEventListener("click", () => {
-        if (
-          boardDiv.dataset.clickable === "false" ||
-          player.gameboard.board[r][c].shot ||
-          boardsDiv.dataset.end === "true"
-        )
-          return;
-
-        if (!player.gameboard.receiveAttack(r, c)) {
-          positionDiv.style.backgroundColor = "grey";
-          setTurn(player);
-        } else {
-          positionDiv.style.backgroundColor = "red";
-        }
-
-        if (player.isFleetSunk()) {
-          findWinner(player.name);
-          boardsDiv.dataset.end = true;
-        }
-      });
-
-      boardDiv.append(positionDiv);
-    }
-  }
-  playerDiv.append(h2, boardDiv);
-  boardsDiv.append(playerDiv);
-
-  return boardDiv;
-}
-function setTurn(player) {
-  for (const board of boards) {
-    const boardName = board.classList[1];
-
-    if (boardName !== player.name) {
-      board.dataset.clickable = true;
-
-      for (const position of board.children) {
-        const color = position.style.backgroundColor;
-        if (color !== "red" && color !== "grey") {
-          position.style.backgroundColor = "white";
-        }
-      }
-    } else {
-      board.dataset.clickable = false;
-
-      for (const ship in player.gameboard.fleet) {
-        for (const p of player.gameboard.fleet[ship].positions) {
-          const positionDiv = document.querySelector(
-            `div.board.${player.name} > ` +
-              `div.position[data-row="${p[0]}"][data-column="${p[1]}"]`,
-          );
-
-          positionDiv.style.backgroundColor = !player.gameboard.board[p[0]][
-            p[1]
-          ].shot
-            ? "green"
-            : "red";
-        }
-      }
-    }
-  }
-}
-function findWinner(loser) {
-  for (const player of players) {
-    if (player.name !== loser) {
-      alert(player.name + " won!!");
-      return true;
-    }
-  }
-
-  return false;
-}
-
-(function computerListeners() {
-  const computerPositions = boards[1].children;
-  for (const positionDiv of computerPositions) {
-    positionDiv.addEventListener("c`lick", () => {
-      attackEnemy(players[0]);
-    });
-
-    function attackEnemy(enemy) {
-      const positions = boards[0].children;
-      const index = Math.round(Math.random() * 99);
-      const position = positions[index];
-      const row = parseInt(position.dataset.row);
-      const column = parseInt(position.dataset.column);
-
-      if (!enemy.gameboard.board[row][column].shot) {
-        position.click();
-        if (enemy.gameboard.board[row][column].ship) {
-          attackEnemy(enemy);
-        }
-      } else {
-        attackEnemy(enemy);
-      }
-    }
-  }
-})();

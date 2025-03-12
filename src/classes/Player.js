@@ -13,14 +13,19 @@ export default class {
     return this.#name;
   }
 
+  isFleetPlaced() {
+    return this.#checkFleet().placed;
+  }
   isFleetSunk() {
-    const sunked = [];
+    return this.#checkFleet().sunk;
+  }
 
+  #checkFleet() {
+    const state = { placed: true, sunk: true };
     for (const ship in this.#gameboard.fleet) {
-      if (this.#gameboard.fleet[ship].isSunk()) sunked.push(ship);
+      if (!this.#gameboard.fleet[ship].placed) state.placed = false;
+      if (!this.#gameboard.fleet[ship].isSunk()) state.sunk = false;
     }
-
-    if (sunked.length === 5) return true;
-    return false;
+    return state;
   }
 }
